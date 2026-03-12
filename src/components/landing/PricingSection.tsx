@@ -21,7 +21,7 @@ export const PricingSection = ({ onGetStarted }: { onGetStarted: () => void }) =
             </h3>
             <div className="text-4xl font-semibold mb-4 text-gray-900 dark:text-white">0.-</div>
             <p className="text-gray-700 dark:text-gray-300 font-normal text-sm mb-6">
-              ชิมลางเข้าถึงคลังได้ 4 เรื่องหลัก พร้อมอ่านโครงสร้าง Prompt และคัดลอกไปใช้ได้ทันที
+              ลองเข้าถึงคลังได้ 4 เรื่องหลัก พร้อมอ่านโครงสร้าง Prompt และคัดลอกไปใช้ได้ทันที
             </p>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
