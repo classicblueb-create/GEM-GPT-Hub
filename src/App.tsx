@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { blueprints, Blueprint, Tier } from './data';
 import { BlueprintCard } from './components/BlueprintCard';
@@ -6,6 +7,19 @@ import { PromptGenerator } from './components/PromptGenerator';
 import { LandingPage } from './components/LandingPage';
 import { GemMaker } from './components/GemMaker';
 import { LayoutDashboard, Zap, Crown, User, LogOut, Heart, Copy, Check } from 'lucide-react';
+import { Layout } from './components/Layout';
+import { Footer } from './components/Footer';
+import { Resources } from './pages/Resources';
+import { UserGuide } from './pages/UserGuide';
+import { Blog } from './pages/Blog';
+import { HelpCenter } from './pages/HelpCenter';
+import { ContactUs } from './pages/ContactUs';
+import { Legal } from './pages/Legal';
+import { TermsOfService } from './pages/TermsOfService';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { CookiePolicy } from './pages/CookiePolicy';
+
+// ... (LoginModal, PromptDetailModal, ProfileModal, Dashboard components remain the same)
 
 const LoginModal = ({ onClose, onLoginSuccess }: { onClose: () => void, onLoginSuccess: () => void }) => {
   const { login } = useAuth();
@@ -351,11 +365,32 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
 };
 
 export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<MainContent />} />
+          <Route path="/resources" element={<Layout><Resources /></Layout>} />
+          <Route path="/user-guide" element={<Layout><UserGuide /></Layout>} />
+          <Route path="/blog" element={<Layout><Blog /></Layout>} />
+          <Route path="/help-center" element={<Layout><HelpCenter /></Layout>} />
+          <Route path="/contact-us" element={<Layout><ContactUs /></Layout>} />
+          <Route path="/legal" element={<Layout><Legal /></Layout>} />
+          <Route path="/terms-of-service" element={<Layout><TermsOfService /></Layout>} />
+          <Route path="/privacy-policy" element={<Layout><PrivacyPolicy /></Layout>} />
+          <Route path="/cookie-policy" element={<Layout><CookiePolicy /></Layout>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+const MainContent = () => {
   const [showDashboard, setShowDashboard] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
 
   return (
-    <AuthProvider>
+    <>
       {showDashboard ? (
         <Dashboard onBack={() => setShowDashboard(false)} />
       ) : (
@@ -369,6 +404,6 @@ export default function App() {
           )}
         </>
       )}
-    </AuthProvider>
+    </>
   );
 }

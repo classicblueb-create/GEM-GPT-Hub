@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { Sparkles, Download, FileText, Settings, BookOpen, Loader2 } from 'lucide-react';
 import { GoogleGenAI, Type } from '@google/genai';
 
+const LoadingAnimation = () => (
+  <div className="flex flex-col items-center justify-center gap-4 py-12">
+    <div className="relative w-24 h-24">
+      <div className="absolute inset-0 border-4 border-purple-200 dark:border-purple-900 rounded-full"></div>
+      <div className="absolute inset-0 border-4 border-t-purple-600 dark:border-t-purple-400 rounded-full animate-spin"></div>
+      <Sparkles className="absolute inset-0 m-auto text-pink-500 animate-pulse" size={32} />
+    </div>
+    <p className="text-purple-600 dark:text-purple-400 font-medium animate-pulse">กำลังเนรมิต GEM ให้คุณ...</p>
+  </div>
+);
+
 export const GemMaker = () => {
   const [inputPrompt, setInputPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -165,23 +176,18 @@ Ensure the output is in Thai language.`;
           placeholder="เช่น อยากได้ GPTs ช่วยร่างสคริปต์ปิดการขายทางโทรศัพท์..."
           className="w-full h-32 px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all resize-none mb-4"
         />
-        <button
-          onClick={handleGenerate}
-          disabled={isGenerating || !inputPrompt.trim()}
-          className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="animate-spin" size={20} />
-              กำลังประมวลผล Logic...
-            </>
-          ) : (
-            <>
-              <Sparkles size={20} />
-              สร้าง GEM ของฉันเลย!
-            </>
-          )}
-        </button>
+        {isGenerating ? (
+          <LoadingAnimation />
+        ) : (
+          <button
+            onClick={handleGenerate}
+            disabled={isGenerating || !inputPrompt.trim()}
+            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+          >
+            <Sparkles size={20} />
+            สร้าง GEM ของฉันเลย!
+          </button>
+        )}
         {error && <p className="text-red-500 mt-4 text-sm">{error}</p>}
       </div>
 
