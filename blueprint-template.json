@@ -1,0 +1,98 @@
+[
+  {
+    "title": "ตัวอย่าง Blueprint - Sales Email",
+    "category": "Sales",
+    "description": "สร้างอีเมลขายสินค้าที่น่าสนใจและดึงดูดลูกค้า",
+    "logic_template": "Write a sales email for {{product}} targeting {{target_audience}} with a {{tone}} tone.",
+    "input_fields": [
+      {
+        "label": "สินค้า/บริการ",
+        "type": "text",
+        "placeholder": "เช่น ซอฟต์แวร์จัดการร้านอาหาร",
+        "name": "product"
+      },
+      {
+        "label": "กลุ่มเป้าหมาย",
+        "type": "text",
+        "placeholder": "เช่น เจ้าของธุรกิจขนาดเล็ก",
+        "name": "target_audience"
+      },
+      {
+        "label": "โทนเสียง",
+        "type": "select",
+        "placeholder": "เลือกโทนเสียง",
+        "name": "tone",
+        "options": ["เป็นมืออาชีพ", "เป็นมิตร", "ดึงดูด", "เร่งด่วน"]
+      }
+    ],
+    "tier": "free"
+  },
+  {
+    "title": "ตัวอย่าง Blueprint - Social Media Post",
+    "category": "Marketing",
+    "description": "สร้างโพสต์โซเชียลมีเดียที่ engaging",
+    "logic_template": "Create a {{platform}} post about {{topic}} for {{brand}} with {{tone}} tone and include {{call_to_action}}.",
+    "input_fields": [
+      {
+        "label": "แพลตฟอร์ม",
+        "type": "select",
+        "placeholder": "เลือกแพลตฟอร์ม",
+        "name": "platform",
+        "options": ["Facebook", "Instagram", "Twitter", "LinkedIn"]
+      },
+      {
+        "label": "หัวข้อ",
+        "type": "text",
+        "placeholder": "เช่น การออกกำลังกาย",
+        "name": "topic"
+      },
+      {
+        "label": "แบรนด์",
+        "type": "text",
+        "placeholder": "เช่น Nike",
+        "name": "brand"
+      },
+      {
+        "label": "โทนเสียง",
+        "type": "select",
+        "placeholder": "เลือกโทนเสียง",
+        "name": "tone",
+        "options": ["สนุกสนาน", "เป็นมืออาชีพ", "สร้างแรงบันดาลใจ", "educational"]
+      },
+      {
+        "label": "Call to Action",
+        "type": "text",
+        "placeholder": "เช่น กดไลค์และแชร์",
+        "name": "call_to_action"
+      }
+    ],
+    "tier": "premium"
+  },
+  {
+    "title": "ตัวอย่าง Blueprint - Blog Outline",
+    "category": "Content",
+    "description": "สร้างโครงร่างบทความบล็อกที่เป็นระบบ",
+    "logic_template": "Create a blog post outline for {{topic}} with {{sections}} main sections, targeting {{audience}} readers.",
+    "input_fields": [
+      {
+        "label": "หัวข้อ",
+        "type": "text",
+        "placeholder": "เช่น วิธีการทำ SEO",
+        "name": "topic"
+      },
+      {
+        "label": "จำนวนส่วน",
+        "type": "number",
+        "placeholder": "เช่น 5",
+        "name": "sections"
+      },
+      {
+        "label": "กลุ่มเป้าหมาย",
+        "type": "text",
+        "placeholder": "เช่น นักการตลาดหน้าใหม่",
+        "name": "audience"
+      }
+    ],
+    "tier": "free"
+  }
+]

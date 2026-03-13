@@ -1,0 +1,558 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: C
+      - generic [ref=e7]: Claude Masterclass
+    - button [ref=e8] [cursor=pointer]:
+      - img [ref=e9]
+  - complementary [ref=e10]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]: C
+        - generic [ref=e14]:
+          - heading "Claude Masterclass" [level=1] [ref=e15]
+          - paragraph [ref=e16]: เรียนรู้ Claude AI แบบมือโปร
+      - navigation [ref=e17]:
+        - button "🗺️ Roadmap" [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]: 🗺️
+          - generic [ref=e20]: Roadmap
+        - button "⚡ Skills Masterclass" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: ⚡
+          - generic [ref=e23]: Skills Masterclass
+        - button "🤖 Cowork คืออะไร" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: 🤖
+          - generic [ref=e26]: Cowork คืออะไร
+        - button "⚙️ ตั้งค่า Cowork" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: ⚙️
+          - generic [ref=e29]: ตั้งค่า Cowork
+        - button "✍️ Prompt Engineering" [ref=e30] [cursor=pointer]:
+          - generic [ref=e31]: ✍️
+          - generic [ref=e32]: Prompt Engineering
+        - button "🎨 Artifacts" [ref=e33] [cursor=pointer]:
+          - generic [ref=e34]: 🎨
+          - generic [ref=e35]: Artifacts
+        - button "🔧 ปรับแต่ง Cowork" [ref=e36] [cursor=pointer]:
+          - generic [ref=e37]: 🔧
+          - generic [ref=e38]: ปรับแต่ง Cowork
+        - button "🏆 17 Best Practices" [ref=e39] [cursor=pointer]:
+          - generic [ref=e40]: 🏆
+          - generic [ref=e41]: 17 Best Practices
+        - button "📁 โครงสร้างโฟลเดอร์" [ref=e42] [cursor=pointer]:
+          - generic [ref=e43]: 📁
+          - generic [ref=e44]: โครงสร้างโฟลเดอร์
+        - button "🔌 Connectors Guide" [ref=e45] [cursor=pointer]:
+          - generic [ref=e46]: 🔌
+          - generic [ref=e47]: Connectors Guide
+        - button "🎯 Cowork Mastery" [ref=e48] [cursor=pointer]:
+          - generic [ref=e49]: 🎯
+          - generic [ref=e50]: Cowork Mastery
+        - button "💼 Use Cases จริง" [ref=e51] [cursor=pointer]:
+          - generic [ref=e52]: 💼
+          - generic [ref=e53]: Use Cases จริง
+        - button "💰 สร้างรายได้ด้วย AI" [ref=e54] [cursor=pointer]:
+          - generic [ref=e55]: 💰
+          - generic [ref=e56]: สร้างรายได้ด้วย AI
+        - button "🚀 Workflows จริง" [ref=e57] [cursor=pointer]:
+          - generic [ref=e58]: 🚀
+          - generic [ref=e59]: Workflows จริง
+        - button "⚡ Power Tips" [ref=e60] [cursor=pointer]:
+          - generic [ref=e61]: ⚡
+          - generic [ref=e62]: Power Tips
+        - button "🎓 Claude as Tutor" [ref=e63] [cursor=pointer]:
+          - generic [ref=e64]: 🎓
+          - generic [ref=e65]: Claude as Tutor
+        - button "📚 แหล่งเรียนรู้" [ref=e66] [cursor=pointer]:
+          - generic [ref=e67]: 📚
+          - generic [ref=e68]: แหล่งเรียนรู้
+        - button "📖 30 นาทีแรก" [ref=e69] [cursor=pointer]:
+          - generic [ref=e70]: 📖
+          - generic [ref=e71]: 30 นาทีแรก
+  - main [ref=e72]:
+    - generic [ref=e73]:
+      - generic [ref=e74]:
+        - generic [ref=e78]:
+          - img [ref=e79]
+          - generic [ref=e82]: Master Claude AI แบบมือโปร
+        - heading "เรียนรู้ Claude AI ตั้งแต่พื้นฐานถึง Production" [level=1] [ref=e83]:
+          - text: เรียนรู้ Claude AI
+          - text: ตั้งแต่พื้นฐานถึง Production
+        - paragraph [ref=e84]: คอร์สเรียนครบวงจรสำหรับผู้ที่ต้องการใช้ Claude AI ในการทำงานจริง ตั้งแต่ Prompt Engineering, Cowork, Artifacts จนถึงการสร้างรายได้
+        - generic [ref=e85]:
+          - button "เริ่มเรียนเลย" [ref=e86] [cursor=pointer]:
+            - text: เริ่มเรียนเลย
+            - img [ref=e87]
+          - button "รู้จัก Cowork" [ref=e89] [cursor=pointer]
+        - generic [ref=e90]:
+          - generic [ref=e91]:
+            - img [ref=e93]
+            - generic [ref=e95]:
+              - generic [ref=e96]: 10 Steps
+              - generic [ref=e97]: Roadmap ชัดเจน
+          - generic [ref=e98]:
+            - img [ref=e100]
+            - generic [ref=e102]:
+              - generic [ref=e103]: 17 Tips
+              - generic [ref=e104]: Best Practices
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - generic [ref=e107]: 🗺️ Learning Path
+          - heading "Claude Masterclass Roadmap" [level=2] [ref=e108]
+          - paragraph [ref=e109]: เส้นทางการเรียนรู้ตั้งแต่เริ่มต้นจนถึงระดับมืออาชีพ แบ่งเป็น 10 ขั้นตอนที่เข้าใจง่าย
+        - generic [ref=e111]:
+          - generic [ref=e112]: ความคืบหน้าของคุณ
+          - generic [ref=e113]: 1 / 10 Steps
+        - generic [ref=e116]:
+          - generic [ref=e117] [cursor=pointer]:
+            - img [ref=e121]
+            - generic [ref=e123]:
+              - generic [ref=e124]: 🌱
+              - generic [ref=e125]: Level 1
+              - heading "ติดตั้ง & ตั้งค่า" [level=3] [ref=e126]
+              - paragraph [ref=e127]: ดาวน์โหลด Claude Desktop + Pro Plan
+              - list [ref=e128]:
+                - listitem [ref=e129]:
+                  - generic [ref=e130]: •
+                  - text: Claude Desktop (Mac/Win)
+                - listitem [ref=e131]:
+                  - generic [ref=e132]: •
+                  - text: สมัคร Pro/Max Plan
+                - listitem [ref=e133]: +2 more
+          - generic [ref=e134] [cursor=pointer]:
+            - img [ref=e138]
+            - generic [ref=e140]:
+              - generic [ref=e141]: 🗺️
+              - generic [ref=e142]: Level 1
+              - heading "เข้าใจ Ecosystem" [level=3] [ref=e143]
+              - paragraph [ref=e144]: Chat, Cowork, Code — ใช้อะไรเมื่อไหร่
+              - list [ref=e145]:
+                - listitem [ref=e146]:
+                  - generic [ref=e147]: •
+                  - text: Claude Chat vs Cowork vs Code
+                - listitem [ref=e148]:
+                  - generic [ref=e149]: •
+                  - text: Projects คืออะไร
+                - listitem [ref=e150]: +2 more
+          - generic [ref=e151] [cursor=pointer]:
+            - img [ref=e155]
+            - generic [ref=e158]:
+              - generic [ref=e159]: ✍️
+              - generic [ref=e160]: Level 1
+              - heading "Prompt Engineering" [level=3] [ref=e161]
+              - paragraph [ref=e162]: สูตร 3 ส่วนที่ทำให้ Claude ทำงานได้จริง
+              - list [ref=e163]:
+                - listitem [ref=e164]:
+                  - generic [ref=e165]: •
+                  - text: Task + Context + Output
+                - listitem [ref=e166]:
+                  - generic [ref=e167]: •
+                  - text: AskUserQuestion tool
+                - listitem [ref=e168]: +2 more
+          - generic [ref=e169] [cursor=pointer]:
+            - img [ref=e173]
+            - generic [ref=e176]:
+              - generic [ref=e177]: 🎨
+              - generic [ref=e178]: Level 2
+              - heading "Artifacts" [level=3] [ref=e179]
+              - paragraph [ref=e180]: สร้าง apps, charts, tools ใน Chat
+              - list [ref=e181]:
+                - listitem [ref=e182]:
+                  - generic [ref=e183]: •
+                  - text: Artifacts 5 ประเภท
+                - listitem [ref=e184]:
+                  - generic [ref=e185]: •
+                  - text: React / HTML / SVG / Code
+                - listitem [ref=e186]: +2 more
+          - generic [ref=e187] [cursor=pointer]:
+            - img [ref=e191]
+            - generic [ref=e194]:
+              - generic [ref=e195]: 🔌
+              - generic [ref=e196]: Level 2
+              - heading "Connectors & ปรับแต่ง" [level=3] [ref=e197]
+              - paragraph [ref=e198]: เชื่อม Gmail, Notion, Slack และอีก 50+ tools
+              - list [ref=e199]:
+                - listitem [ref=e200]:
+                  - generic [ref=e201]: •
+                  - text: Connectors Setup (OAuth)
+                - listitem [ref=e202]:
+                  - generic [ref=e203]: •
+                  - text: Plugins & Custom Skills
+                - listitem [ref=e204]: +2 more
+          - generic [ref=e205] [cursor=pointer]:
+            - img [ref=e209]
+            - generic [ref=e212]:
+              - generic [ref=e213]: 🏗️
+              - generic [ref=e214]: Level 2
+              - heading "โครงสร้างโฟลเดอร์" [level=3] [ref=e215]
+              - paragraph [ref=e216]: Context Files ที่ทำให้ Claude รู้จักคุณ
+              - list [ref=e217]:
+                - listitem [ref=e218]:
+                  - generic [ref=e219]: •
+                  - text: about-me.md + my-voice.md
+                - listitem [ref=e220]:
+                  - generic [ref=e221]: •
+                  - text: my-rules.md + _MANIFEST.md
+                - listitem [ref=e222]: +2 more
+          - generic [ref=e223] [cursor=pointer]:
+            - img [ref=e227]
+            - generic [ref=e230]:
+              - generic [ref=e231]: 🎯
+              - generic [ref=e232]: Level 3
+              - heading "Cowork Mastery" [level=3] [ref=e233]
+              - paragraph [ref=e234]: สั่งงาน AI แทนทำเอง — ราบรื่นทุก session
+              - list [ref=e235]:
+                - listitem [ref=e236]:
+                  - generic [ref=e237]: •
+                  - text: "Mental Model: Director"
+                - listitem [ref=e238]:
+                  - generic [ref=e239]: •
+                  - text: 4 Delegation Levels
+                - listitem [ref=e240]: +2 more
+          - generic [ref=e241] [cursor=pointer]:
+            - img [ref=e245]
+            - generic [ref=e248]:
+              - generic [ref=e249]: ⚡
+              - generic [ref=e250]: Level 3
+              - heading "Skills Masterclass" [level=3] [ref=e251]
+              - paragraph [ref=e252]: สร้าง Skills ที่ trigger ทำงานแทนคุณ
+              - list [ref=e253]:
+                - listitem [ref=e254]:
+                  - generic [ref=e255]: •
+                  - text: Anatomy of a Skill
+                - listitem [ref=e256]:
+                  - generic [ref=e257]: •
+                  - text: YAML Triggers & Instructions
+                - listitem [ref=e258]: +2 more
+          - generic [ref=e259] [cursor=pointer]:
+            - img [ref=e263]
+            - generic [ref=e266]:
+              - generic [ref=e267]: 🏆
+              - generic [ref=e268]: Level 3
+              - heading "17 Best Practices" [level=3] [ref=e269]
+              - paragraph [ref=e270]: เทคนิคจาก 400+ sessions จริง
+              - list [ref=e271]:
+                - listitem [ref=e272]:
+                  - generic [ref=e273]: •
+                  - text: Context Architecture
+                - listitem [ref=e274]:
+                  - generic [ref=e275]: •
+                  - text: Subagents & Scheduling
+                - listitem [ref=e276]: +2 more
+          - generic [ref=e277] [cursor=pointer]:
+            - img [ref=e281]
+            - generic [ref=e284]:
+              - generic [ref=e285]: 💰
+              - generic [ref=e286]: Level 4
+              - heading "Use Cases & รายได้" [level=3] [ref=e287]
+              - paragraph [ref=e288]: ประยุกต์ใช้จริง + สร้างรายได้จาก AI
+              - list [ref=e289]:
+                - listitem [ref=e290]:
+                  - generic [ref=e291]: •
+                  - text: 10 Real Use Cases
+                - listitem [ref=e292]:
+                  - generic [ref=e293]: •
+                  - text: Use Cases ตามอาชีพ
+                - listitem [ref=e294]: +2 more
+      - generic [ref=e295]:
+        - generic [ref=e296]:
+          - generic [ref=e297]: 🎯 User Levels
+          - heading "คุณอยู่ระดับไหน?" [level=2] [ref=e298]
+          - paragraph [ref=e299]: แต่ละระดับมีทักษะและเป้าหมายที่แตกต่างกัน ค้นหาระดับของคุณและเริ่มพัฒนา
+        - generic [ref=e300]:
+          - generic [ref=e301]:
+            - generic [ref=e302]: LEVEL 1
+            - generic [ref=e304]:
+              - generic [ref=e305]: 💬
+              - generic [ref=e306]:
+                - heading "The Prompter นักสนทนา" [level=3] [ref=e307]
+                - paragraph [ref=e308]: เปิดใช้งาน Chat ถามไปมาได้คำตอบ รู้จัก Claude Projects
+                - generic [ref=e309]:
+                  - generic [ref=e310]:
+                    - img [ref=e311]
+                    - text: Claude Chat
+                  - generic [ref=e313]:
+                    - img [ref=e314]
+                    - text: Prompt พื้นฐาน
+                  - generic [ref=e316]:
+                    - img [ref=e317]
+                    - text: Projects
+                  - generic [ref=e319]:
+                    - img [ref=e320]
+                    - text: Learning Style
+                - generic [ref=e322]:
+                  - paragraph [ref=e323]: "Next Step:"
+                  - paragraph [ref=e324]: เรียน Artifacts + Connectors เพื่อสร้างผลงานจริง
+          - generic [ref=e325]:
+            - generic [ref=e326]: LEVEL 2
+            - generic [ref=e328]:
+              - generic [ref=e329]: 🔨
+              - generic [ref=e330]:
+                - heading "The Builder นักสร้าง" [level=3] [ref=e331]
+                - paragraph [ref=e332]: เชื่อม Connectors เช่น Gmail, Notion ใช้ Artifacts สร้าง apps และ dashboards
+                - generic [ref=e333]:
+                  - generic [ref=e334]:
+                    - img [ref=e335]
+                    - text: Connectors 50+
+                  - generic [ref=e337]:
+                    - img [ref=e338]
+                    - text: Artifacts (React/HTML/SVG)
+                  - generic [ref=e340]:
+                    - img [ref=e341]
+                    - text: Claude-in-Claude Apps
+                  - generic [ref=e343]:
+                    - img [ref=e344]
+                    - text: Notion Integration
+                - generic [ref=e346]:
+                  - paragraph [ref=e347]: "Next Step:"
+                  - paragraph [ref=e348]: เรียน Cowork + Skills เพื่อ automate งานทั้งหมด
+          - generic [ref=e349]:
+            - generic [ref=e350]: LEVEL 3
+            - generic [ref=e352]:
+              - generic [ref=e353]: ⚡
+              - generic [ref=e354]:
+                - heading "The Automator นักออโตเมท" [level=3] [ref=e355]
+                - paragraph [ref=e356]: ใช้ Cowork automate งาน สร้าง Skills ของตัวเอง ตั้ง /schedule workflows
+                - generic [ref=e357]:
+                  - generic [ref=e358]:
+                    - img [ref=e359]
+                    - text: Cowork Mastery
+                  - generic [ref=e361]:
+                    - img [ref=e362]
+                    - text: Custom Skills
+                  - generic [ref=e364]:
+                    - img [ref=e365]
+                    - text: Skills Marketplace
+                  - generic [ref=e367]:
+                    - img [ref=e368]
+                    - text: /schedule Automation
+                - generic [ref=e370]:
+                  - paragraph [ref=e371]: "Next Step:"
+                  - paragraph [ref=e372]: เรียน Claude Code เพื่อสร้าง apps และ workflows เต็มรูปแบบ
+          - generic [ref=e373]:
+            - generic [ref=e374]: LEVEL 4
+            - generic [ref=e376]:
+              - generic [ref=e377]: 🚀
+              - generic [ref=e378]:
+                - heading "The Operator ผู้บัญชาการ AI" [level=3] [ref=e379]
+                - paragraph [ref=e380]: Claude Code ทำ automated workflows เต็มรูปแบบ สร้างเว็บ/แอป สร้างรายได้จาก AI
+                - generic [ref=e381]:
+                  - generic [ref=e382]:
+                    - img [ref=e383]
+                    - text: Claude Code
+                  - generic [ref=e385]:
+                    - img [ref=e386]
+                    - text: Full Automation
+                  - generic [ref=e388]:
+                    - img [ref=e389]
+                    - text: App/Web Builder
+                  - generic [ref=e391]:
+                    - img [ref=e392]
+                    - text: AI Income Streams
+                - generic [ref=e394]:
+                  - paragraph [ref=e395]: "Next Step:"
+                  - paragraph [ref=e396]: คุณถึงจุดสูงสุดแล้ว! สอนคนอื่นและสร้างรายได้
+      - generic [ref=e397]:
+        - generic [ref=e398]:
+          - generic [ref=e399]: 🏆 Best Practices
+          - heading "17 เทคนิคจาก 400+ Sessions" [level=2] [ref=e400]
+          - paragraph [ref=e401]: เคล็ดลับที่ช่วยให้คุณใช้ Claude ได้อย่างมีประสิทธิภาพ
+        - generic [ref=e402]:
+          - generic [ref=e404] [cursor=pointer]:
+            - generic [ref=e405]: "1"
+            - generic [ref=e406]:
+              - generic [ref=e407]:
+                - heading "สร้าง _MANIFEST.md ทุกโฟลเดอร์" [level=3] [ref=e408]
+                - generic [ref=e409]: สูงสุด
+              - paragraph [ref=e410]: บอก Claude ว่าไฟล์ไหนคือ source of truth แบ่ง Tier 1 (สำคัญ), Tier 2 (domain), Tier 3 (archive) ป้องกันปัญหา context ขัดแย้งกัน
+            - img [ref=e412]
+          - generic [ref=e415] [cursor=pointer]:
+            - generic [ref=e416]: "2"
+            - generic [ref=e417]:
+              - generic [ref=e418]:
+                - heading "Global Instructions = OS ของคุณ" [level=3] [ref=e419]
+                - generic [ref=e420]: สูงมาก
+              - paragraph [ref=e421]: ตั้งครั้งเดียว ทำงานทุก session บอก Claude ว่าคุณเป็นใคร ต้องการอะไร และ quality bar ที่ต้องการ
+            - img [ref=e423]
+          - generic [ref=e426] [cursor=pointer]:
+            - generic [ref=e427]: "3"
+            - generic [ref=e428]:
+              - generic [ref=e429]:
+                - heading "Context Files 3 ไฟล์หลัก" [level=3] [ref=e430]
+                - generic [ref=e431]: สูงมาก
+              - paragraph [ref=e432]: about-me.md, brand-voice.md, working-style.md ขจัดปัญหา generic AI output overnight
+            - img [ref=e434]
+          - generic [ref=e437] [cursor=pointer]:
+            - generic [ref=e438]: "4"
+            - generic [ref=e439]:
+              - generic [ref=e440]:
+                - heading "Folder Instructions ต่อโปรเจกต์" [level=3] [ref=e441]
+                - generic [ref=e442]: สูง
+              - paragraph [ref=e443]: "Global = universal, Folder = project-specific รวมกัน 3 layers: Global → Folder → Prompt"
+            - img [ref=e445]
+          - generic [ref=e448] [cursor=pointer]:
+            - generic [ref=e449]: "5"
+            - generic [ref=e450]:
+              - generic [ref=e451]:
+                - heading "Scope Context ให้แน่นเสมอ" [level=3] [ref=e452]
+                - generic [ref=e453]: สูง
+              - paragraph [ref=e454]: Context ใหญ่ ≠ output ดี บอก Claude ให้อ่านเฉพาะที่จำเป็น ลด noise ในการตัดสินใจ
+            - img [ref=e456]
+          - generic [ref=e459] [cursor=pointer]:
+            - generic [ref=e460]: "6"
+            - generic [ref=e461]:
+              - generic [ref=e462]:
+                - heading "Define End State ไม่ใช่ Process" [level=3] [ref=e463]
+                - generic [ref=e464]: สูง
+              - paragraph [ref=e465]: บอกว่า 'done' หน้าตาเป็นยังไง ไม่ใช่วิธีทำทีละขั้น Claude จะหาวิธีเองได้ดีกว่า
+            - img [ref=e467]
+          - generic [ref=e470] [cursor=pointer]:
+            - generic [ref=e471]: "7"
+            - generic [ref=e472]:
+              - generic [ref=e473]:
+                - heading "ขอ Plan ก่อน Execute เสมอ" [level=3] [ref=e474]
+                - generic [ref=e475]: สูง
+              - paragraph [ref=e476]: "ป้องกัน disaster 90% ใส่ใน Global Instructions: 'Show plan, wait for approval before executing'"
+            - img [ref=e478]
+          - generic [ref=e481] [cursor=pointer]:
+            - generic [ref=e482]: "8"
+            - generic [ref=e483]:
+              - generic [ref=e484]:
+                - heading "บอกวิธีจัดการความไม่แน่นอน" [level=3] [ref=e485]
+                - generic [ref=e486]: กลาง-สูง
+              - paragraph [ref=e487]: บอก Claude ว่าถ้าไม่แน่ใจให้ mark ว่า VERIFY หรือใส่ /needs-review ไม่ใช่ให้ guess เอง
+            - img [ref=e489]
+          - generic [ref=e492] [cursor=pointer]:
+            - generic [ref=e493]: "9"
+            - generic [ref=e494]:
+              - generic [ref=e495]:
+                - heading "Batch งานที่เกี่ยวข้องใน 1 Session" [level=3] [ref=e496]
+                - generic [ref=e497]: กลาง
+              - paragraph [ref=e498]: ทุก session มี startup cost รวม 5 งานที่เชื่อมกัน Context จาก task แรกจะช่วย task ถัดไป
+            - img [ref=e500]
+          - generic [ref=e503] [cursor=pointer]:
+            - generic [ref=e504]: "10"
+            - generic [ref=e505]:
+              - generic [ref=e506]:
+                - heading "ใช้ Subagents แบบตั้งใจ" [level=3] [ref=e507]
+                - generic [ref=e508]: กลาง-สูง
+              - paragraph [ref=e509]: Parallel processing สำหรับงานที่ independent กัน เช่น วิเคราะห์ 4 vendor พร้อมกัน ลดเวลา 75%
+            - img [ref=e511]
+          - generic [ref=e514] [cursor=pointer]:
+            - generic [ref=e515]: "11"
+            - generic [ref=e516]:
+              - generic [ref=e517]:
+                - heading "/schedule งาน Recurring" [level=3] [ref=e518]
+                - generic [ref=e519]: กลาง
+              - paragraph [ref=e520]: ตั้ง Monday briefing, Friday report, Daily competitor tracking ทำงานอัตโนมัติ (ต้องเปิดแอปไว้)
+            - img [ref=e522]
+          - generic [ref=e525] [cursor=pointer]:
+            - generic [ref=e526]: "12"
+            - generic [ref=e527]:
+              - generic [ref=e528]:
+                - heading "Externalize ทุกอย่างเป็นไฟล์" [level=3] [ref=e529]
+                - generic [ref=e530]: สูงมาก
+              - paragraph [ref=e531]: Cowork ไม่มี memory ข้าม session ทุก preference ต้องอยู่ในไฟล์ สร้างครั้งเดียว ใช้ตลอด
+            - img [ref=e533]
+          - generic [ref=e536] [cursor=pointer]:
+            - generic [ref=e537]: "13"
+            - generic [ref=e538]:
+              - generic [ref=e539]:
+                - heading "/schedule + Connectors = Real Automation" [level=3] [ref=e540]
+                - generic [ref=e541]: สูง
+              - paragraph [ref=e542]: Scheduled tasks + Gmail/Slack connector = ระบบ autonomous จริงๆ ที่ทำงานโดยไม่ต้องสั่ง
+            - img [ref=e544]
+          - generic [ref=e547] [cursor=pointer]:
+            - generic [ref=e548]: "14"
+            - generic [ref=e549]:
+              - generic [ref=e550]:
+                - heading "Stack Plugins หลายตัวพร้อมกัน" [level=3] [ref=e551]
+                - generic [ref=e552]: กลาง
+              - paragraph [ref=e553]: Data Analysis + Sales plugin ใน 1 task ได้เลย ใช้ความสามารถจากหลาย plugin รวมกัน
+            - img [ref=e555]
+          - generic [ref=e558] [cursor=pointer]:
+            - generic [ref=e559]: "15"
+            - generic [ref=e560]:
+              - generic [ref=e561]:
+                - heading "สร้าง Custom Skills" [level=3] [ref=e562]
+                - generic [ref=e563]: สูง
+              - paragraph [ref=e564]: Workflow ที่ทำบ่อยๆ → เขียนเป็น Skill file ครั้งต่อไปแค่พูดว่า 'Run my [skill name]'
+            - img [ref=e566]
+          - generic [ref=e569] [cursor=pointer]:
+            - generic [ref=e570]: "16"
+            - generic [ref=e571]:
+              - generic [ref=e572]:
+                - heading "ใช้ Plugin Management Plugin" [level=3] [ref=e573]
+                - generic [ref=e574]: กลาง
+              - paragraph [ref=e575]: สร้าง custom plugin แบบ conversational ไม่ต้องเขียนโค้ด บอกว่าต้องการอะไร Claude สร้างให้
+            - img [ref=e577]
+          - generic [ref=e580] [cursor=pointer]:
+            - generic [ref=e581]: "17"
+            - generic [ref=e582]:
+              - generic [ref=e583]:
+                - heading "ปฏิบัติต่อ Cowork เหมือนพนักงาน" [level=3] [ref=e584]
+                - generic [ref=e585]: สูงสุด
+              - paragraph [ref=e586]: Backup ก่อน experiment, scope ไฟล์ sensitive แยก, monitor 3-5 run แรก, ใส่ 'Don't delete' เสมอ
+            - img [ref=e588]
+        - generic [ref=e590]:
+          - img [ref=e591]
+          - paragraph [ref=e593]:
+            - strong [ref=e594]: "Tip:"
+            - text: คลิกที่แต่ละข้อเพื่ออ่านรายละเอียดเพิ่มเติม
+      - generic [ref=e595]:
+        - generic [ref=e596]:
+          - generic [ref=e597]: 🚀 Workflows
+          - heading "ตัวอย่าง Workflow จริง" [level=2] [ref=e598]
+          - paragraph [ref=e599]: นำไปใช้ได้ทันทีกับ Cowork ของคุณ
+        - generic [ref=e600]:
+          - generic [ref=e601]:
+            - generic [ref=e603] [cursor=pointer]:
+              - generic [ref=e604]: 🌅
+              - generic [ref=e605]:
+                - heading "AI Morning Brief" [level=3] [ref=e606]
+                - paragraph [ref=e607]: ทุกเช้า Cowork เช็ค calendar + Notion แล้วสรุปวันของคุณ
+              - img [ref=e609]
+            - generic [ref=e612] [cursor=pointer]:
+              - generic [ref=e613]: 📧
+              - generic [ref=e614]:
+                - heading "Email Manager" [level=3] [ref=e615]
+                - paragraph [ref=e616]: จัดการ inbox อัตโนมัติ จัดเรียง และ draft คำตอบ
+            - generic [ref=e618] [cursor=pointer]:
+              - generic [ref=e619]: 📰
+              - generic [ref=e620]:
+                - heading "Daily News Research" [level=3] [ref=e621]
+                - paragraph [ref=e622]: สรุปข่าวสำคัญ AI/Crypto/Business ทุกวันอัตโนมัติ
+            - generic [ref=e624] [cursor=pointer]:
+              - generic [ref=e625]: 📊
+              - generic [ref=e626]:
+                - heading "Consulting Deliverable" [level=3] [ref=e627]
+                - paragraph [ref=e628]: สร้าง deliverable จาก brief ของลูกค้าแบบมืออาชีพ
+          - generic [ref=e630]:
+            - generic [ref=e631]:
+              - heading "🌅 AI Morning Brief" [level=3] [ref=e632]
+              - paragraph [ref=e633]: ทุกเช้า Cowork เช็ค calendar + Notion แล้วสรุปวันของคุณ
+            - generic [ref=e634]:
+              - generic [ref=e635]: "You are my personal chief of staff. Every morning when I run this task, connect to my Google Calendar and Notion and do the following: Pull every meeting and event scheduled for today. Go into Notion and pull any tasks marked as high priority or due today. Cross-reference my calendar and Notion tasks — identify anything underprepared, overdue, or likely to conflict. Deliver my morning brief in this exact format: GOOD MORNING. HERE IS YOUR DAY. TODAY IS: [Day and Date] YOUR SCHEDULE [Time] [Event] with [Attendees] YOUR PRIORITIES TODAY 1. 2. 3. WATCH OUT FOR YOUR FOCUS FOR TODAY"
+              - button "Copy" [ref=e636] [cursor=pointer]:
+                - img [ref=e637]
+                - text: Copy
+      - generic [ref=e641]:
+        - generic [ref=e642]:
+          - generic [ref=e643]:
+            - generic [ref=e644]: C
+            - generic [ref=e645]:
+              - heading "Claude Masterclass" [level=3] [ref=e646]
+              - paragraph [ref=e647]: เรียนรู้ Claude AI แบบมือโปร
+          - generic [ref=e648]:
+            - link "Roadmap" [ref=e649]:
+              - /url: "#roadmap"
+            - link "Best Practices" [ref=e650]:
+              - /url: "#best-practices"
+            - link "Workflows" [ref=e651]:
+              - /url: "#workflows"
+        - generic [ref=e652]:
+          - text: © 2026 Claude Masterclass. Made with
+          - img [ref=e653]
+          - text: for Claude AI learners
+```

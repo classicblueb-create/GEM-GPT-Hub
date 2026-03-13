@@ -1,55 +1,103 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { blueprints, Blueprint, Tier } from './data';
+import { blueprints as staticBlueprints, Blueprint, Tier } from './data';
+import { blueprintService } from './services/blueprintService';
 import { BlueprintCard } from './components/BlueprintCard';
 import { PromptGenerator } from './components/PromptGenerator';
 import { LandingPage } from './components/LandingPage';
 import { GemMaker } from './components/GemMaker';
 import { LayoutDashboard, Zap, Crown, User, LogOut, Heart, Copy, Check } from 'lucide-react';
 import { Layout } from './components/Layout';
-import { Footer } from './components/Footer';
-import { Resources } from './pages/Resources';
-import { UserGuide } from './pages/UserGuide';
-import { Blog } from './pages/Blog';
-import { HelpCenter } from './pages/HelpCenter';
-import { ContactUs } from './pages/ContactUs';
-import { Legal } from './pages/Legal';
-import { TermsOfService } from './pages/TermsOfService';
-import { PrivacyPolicy } from './pages/PrivacyPolicy';
-import { CookiePolicy } from './pages/CookiePolicy';
+import { ErrorBoundary } from './components/ErrorBoundary';
+
+// Lazy load pages สำหรับ code splitting
+const Resources = lazy(() => import('./pages/Resources').then(module => ({ default: module.Resources })));
+const UserGuide = lazy(() => import('./pages/UserGuide').then(module => ({ default: module.UserGuide })));
+const Blog = lazy(() => import('./pages/Blog').then(module => ({ default: module.Blog })));
+const HelpCenter = lazy(() => import('./pages/HelpCenter').then(module => ({ default: module.HelpCenter })));
+const ContactUs = lazy(() => import('./pages/ContactUs').then(module => ({ default: module.ContactUs })));
+const Legal = lazy(() => import('./pages/Legal').then(module => ({ default: module.Legal })));
+const TermsOfService = lazy(() => import('./pages/TermsOfService').then(module => ({ default: module.TermsOfService })));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy').then(module => ({ default: module.CookiePolicy })));
+
+// Loading component สำหรับ lazy loaded pages
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+  </div>
+);
 
 // ... (LoginModal, PromptDetailModal, ProfileModal, Dashboard components remain the same)
 
 const LoginModal = ({ onClose, onLoginSuccess }: { onClose: () => void, onLoginSuccess: () => void }) => {
-  const { login } = useAuth();
+  const { signIn, signInWithGoogle, signUp, isLoading, error, clearError } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
-  const handleSubmit = (e: React.FormEvent) => {
+  const [displayName, setDisplayName] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // จำลองระบบหลังบ้าน: ตรวจสอบสิทธิ์จากอีเมล
-    let tier: Tier = 'free';
-    if (email.toLowerCase().includes('vip')) {
-      tier = 'vip';
-    } else if (email.toLowerCase().includes('premium') || email.toLowerCase().includes('lifetime')) {
-      tier = 'premium';
+    clearError();
+
+    try {
+      if (isSignUp) {
+        await signUp(email, password, displayName);
+      } else {
+        await signIn(email, password);
+      }
+      onLoginSuccess();
+      onClose();
+    } catch (error) {
+      // Error is handled by AuthContext
     }
-    
-    login(tier);
-    onLoginSuccess();
-    onClose();
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      clearError();
+      await signInWithGoogle();
+      onLoginSuccess();
+      onClose();
+    } catch (error) {
+      // Error is handled by AuthContext
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-gray-100 dark:border-gray-800">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">เข้าสู่ระบบ</h2>
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+          {isSignUp ? 'สร้างบัญชี' : 'เข้าสู่ระบบ'}
+        </h2>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-300 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
+          {isSignUp && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ชื่อที่แสดง</label>
+              <input
+                type="text"
+                required={isSignUp}
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all"
+                placeholder="ชื่อของคุณ"
+              />
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">อีเมล</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -57,10 +105,11 @@ const LoginModal = ({ onClose, onLoginSuccess }: { onClose: () => void, onLoginS
               placeholder="your@email.com"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">รหัสผ่าน</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -68,25 +117,64 @@ const LoginModal = ({ onClose, onLoginSuccess }: { onClose: () => void, onLoginS
               placeholder="••••••••"
             />
           </div>
-          <button type="submit" className="w-full py-3 px-4 mt-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium transition-colors shadow-lg">
-            เข้าสู่ระบบ
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 px-4 mt-2 rounded-xl bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'กำลังดำเนินการ...' : (isSignUp ? 'สร้างบัญชี' : 'เข้าสู่ระบบ')}
           </button>
-          <p className="text-xs text-center text-gray-500 mt-4">
-            *สำหรับทดสอบ: พิมพ์ "vip" หรือ "premium" ในอีเมลเพื่อจำลองสิทธิ์
-          </p>
         </form>
-        <button onClick={onClose} className="mt-4 w-full py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm">ยกเลิก</button>
+
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white dark:bg-gray-900 text-gray-500">หรือ</span>
+            </div>
+          </div>
+
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+            className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            เข้าสู่ระบบด้วย Google
+          </button>
+        </div>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="text-sm text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300"
+          >
+            {isSignUp ? 'มีบัญชีอยู่แล้ว? เข้าสู่ระบบ' : 'ยังไม่มีบัญชี? สมัครสมาชิก'}
+          </button>
+        </div>
+
+        <button onClick={onClose} className="mt-4 w-full py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm">
+          ยกเลิก
+        </button>
       </div>
     </div>
   );
 };
 
 const PromptDetailModal = ({ blueprint, onClose }: { blueprint: Blueprint, onClose: () => void }) => {
-  const { userTier, favorites, toggleFavorite } = useAuth();
+  const { userProfile, toggleFavorite, incrementRequestCount, remainingRequests } = useAuth();
   const [copied, setCopied] = useState(false);
 
-  const canFavorite = userTier === 'premium' || userTier === 'vip';
-  const isFavorite = favorites.includes(blueprint.id);
+  const canFavorite = userProfile?.tier === 'premium' || userProfile?.tier === 'vip';
+  const isFavorite = userProfile?.favorites.includes(blueprint.id) || false;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(blueprint.logic_template);
@@ -260,6 +348,29 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
   const [category, setCategory] = useState('All');
   const [showProfile, setShowProfile] = useState(false);
   const [activeTab, setActiveTab] = useState<'hub' | 'gem-maker'>('hub');
+  const [blueprints, setBlueprints] = useState<Blueprint[]>(staticBlueprints);
+  const [loading, setLoading] = useState(true);
+
+  // Load blueprints from Firebase on component mount
+  useEffect(() => {
+    const loadBlueprints = async () => {
+      try {
+        setLoading(true);
+        const firebaseBlueprints = await blueprintService.getAllBlueprints();
+        if (firebaseBlueprints.length > 0) {
+          setBlueprints(firebaseBlueprints);
+        }
+      } catch (error) {
+        console.error('Error loading blueprints:', error);
+        // Fallback to static blueprints if Firebase fails
+        setBlueprints(staticBlueprints);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBlueprints();
+  }, []);
 
   const filteredBlueprints = category === 'All' ? blueprints : blueprints.filter(b => b.category === category);
 
@@ -346,11 +457,18 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
 
             {/* Grid */}
             <main>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                {filteredBlueprints.map(b => (
-                  <BlueprintCard key={b.id} blueprint={b} onBlueprintClick={(b) => setSelectedBlueprint(b)} />
-                ))}
-              </div>
+              {loading ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <span className="ml-3 text-gray-600 dark:text-gray-400">กำลังโหลด Blueprints...</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                  {filteredBlueprints.map(b => (
+                    <BlueprintCard key={b.id} blueprint={b} onBlueprintClick={(b) => setSelectedBlueprint(b)} />
+                  ))}
+                </div>
+              )}
             </main>
           </>
         ) : (
@@ -366,22 +484,26 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainContent />} />
-          <Route path="/resources" element={<Layout><Resources /></Layout>} />
-          <Route path="/user-guide" element={<Layout><UserGuide /></Layout>} />
-          <Route path="/blog" element={<Layout><Blog /></Layout>} />
-          <Route path="/help-center" element={<Layout><HelpCenter /></Layout>} />
-          <Route path="/contact-us" element={<Layout><ContactUs /></Layout>} />
-          <Route path="/legal" element={<Layout><Legal /></Layout>} />
-          <Route path="/terms-of-service" element={<Layout><TermsOfService /></Layout>} />
-          <Route path="/privacy-policy" element={<Layout><PrivacyPolicy /></Layout>} />
-          <Route path="/cookie-policy" element={<Layout><CookiePolicy /></Layout>} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<MainContent />} />
+              <Route path="/resources" element={<Layout><Resources /></Layout>} />
+              <Route path="/user-guide" element={<Layout><UserGuide /></Layout>} />
+              <Route path="/blog" element={<Layout><Blog /></Layout>} />
+              <Route path="/help-center" element={<Layout><HelpCenter /></Layout>} />
+              <Route path="/contact-us" element={<Layout><ContactUs /></Layout>} />
+              <Route path="/legal" element={<Layout><Legal /></Layout>} />
+              <Route path="/terms-of-service" element={<Layout><TermsOfService /></Layout>} />
+              <Route path="/privacy-policy" element={<Layout><PrivacyPolicy /></Layout>} />
+              <Route path="/cookie-policy" element={<Layout><CookiePolicy /></Layout>} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

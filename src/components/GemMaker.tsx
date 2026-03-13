@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Sparkles, Download, FileText, Settings, BookOpen, Loader2 } from 'lucide-react';
 import { GoogleGenAI, Type } from '@google/genai';
+import { useAuth } from '../context/AuthContext';
+import { addBreadcrumb, captureError } from '../lib/sentry';
 
 const LoadingAnimation = () => (
   <div className="flex flex-col items-center justify-center gap-4 py-12">
@@ -23,14 +25,37 @@ export const GemMaker = () => {
   } | null>(null);
   const [error, setError] = useState('');
 
+  const { incrementRequestCount, remainingRequests, isLoggedIn } = useAuth();
+
   const handleGenerate = async () => {
     if (!inputPrompt.trim()) return;
-    
+
+    // Check authentication
+    if (!isLoggedIn) {
+      setError('กรุณาเข้าสู่ระบบก่อนใช้งาน');
+      return;
+    }
+
+    // Check remaining requests
+    if (remainingRequests <= 0) {
+      setError('คุณใช้สิทธิ์การสร้าง GEM ครบแล้ว กรุณาอัปเกรดเป็น Premium หรือ VIP');
+      return;
+    }
+
     setIsGenerating(true);
     setError('');
     setResult(null);
 
     try {
+      // Increment request count before generating
+      const canProceed = await incrementRequestCount();
+      if (!canProceed) {
+        setError('คุณใช้สิทธิ์การสร้าง GEM ครบแล้ว กรุณาอัปเกรดเป็น Premium หรือ VIP');
+        return;
+      }
+
+      addBreadcrumb('Starting GEM generation', 'ai-usage', 'info');
+
       // Initialize Gemini API
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       
@@ -67,11 +92,18 @@ Ensure the output is in Thai language.`;
       if (response.text) {
         const parsedResult = JSON.parse(response.text);
         setResult(parsedResult);
+        addBreadcrumb('GEM generated successfully', 'ai-usage', 'info');
       } else {
         throw new Error('No response from AI');
       }
     } catch (err) {
       console.error('Generation error:', err);
+      captureError(err as Error, {
+        component: 'GemMaker',
+        action: 'generate',
+        inputLength: inputPrompt.length,
+      });
+      addBreadcrumb('GEM generation failed', 'error', 'error');
       setError('เกิดข้อผิดพลาดในการสร้าง GEM กรุณาลองใหม่อีกครั้ง');
     } finally {
       setIsGenerating(false);
@@ -167,9 +199,19 @@ Ensure the output is in Thai language.`;
 
       {/* Input Section */}
       <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 shadow-xl shadow-gray-200/50 dark:shadow-black/20 border border-gray-200 dark:border-gray-800 mb-8">
-        <label className="block text-lg font-medium text-gray-900 dark:text-white mb-4">
-          คุณอยากให้ AI ช่วยงานเรื่องอะไร?
-        </label>
+        <div className="flex justify-between items-center mb-4">
+          <label className="block text-lg font-medium text-gray-900 dark:text-white">
+            คุณอยากให้ AI ช่วยงานเรื่องอะไร?
+          </label>
+          {isLoggedIn && (
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              คงเหลือ: {remainingRequests} ครั้ง
+              {remainingRequests === 0 && (
+                <span className="text-red-500 ml-2">ใช้ครบแล้ว</span>
+              )}
+            </div>
+          )}
+        </div>
         <textarea
           value={inputPrompt}
           onChange={(e) => setInputPrompt(e.target.value)}
@@ -179,14 +221,22 @@ Ensure the output is in Thai language.`;
         {isGenerating ? (
           <LoadingAnimation />
         ) : (
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating || !inputPrompt.trim()}
-            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-          >
-            <Sparkles size={20} />
-            สร้าง GEM ของฉันเลย!
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating || !inputPrompt.trim() || !isLoggedIn || remainingRequests === 0}
+              className="flex-1 px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+            >
+              <Sparkles size={20} />
+              {!isLoggedIn ? 'เข้าสู่ระบบก่อนใช้งาน' : remainingRequests === 0 ? 'ใช้สิทธิ์ครบแล้ว' : 'สร้าง GEM ของฉันเลย!'}
+            </button>
+
+            {remainingRequests === 0 && (
+              <button className="px-6 py-3.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-medium shadow-lg transition-all hover:-translate-y-0.5">
+                อัปเกรดเลย
+              </button>
+            )}
+          </div>
         )}
         {error && <p className="text-red-500 mt-4 text-sm">{error}</p>}
       </div>
