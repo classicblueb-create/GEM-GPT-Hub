@@ -1,10 +1,10 @@
 {
-  "projectId": "process.env.VITE_FIREBASE_PROJECT_ID",
-  "appId": "process.env.VITE_FIREBASE_APP_ID",
-  "apiKey": "process.env.VITE_FIREBASE_API_KEY",
-  "authDomain": "process.env.VITE_FIREBASE_AUTH_DOMAIN",
-  "firestoreDatabaseId": "(default)",
-  "storageBucket": "process.env.VITE_FIREBASE_STORAGE_BUCKET",
-  "messagingSenderId": "process.env.VITE_FIREBASE_MESSAGING_SENDER_ID",
-  "measurementId": "process.env.VITE_FIREBASE_MEASUREMENT_ID"
+  "projectId": "retrolens-ai-app",
+  "appId": "1:433611784915:web:efe9cfc0155e48dc058a26",
+  "apiKey": "AIzaSyChqa_Nf4fXz3M2HikXOvXXrHRlbjjLIEY",
+  "authDomain": "retrolens-ai-app.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-95f2db4b-ca50-4cdb-946b-e2bdead018ab",
+  "storageBucket": "retrolens-ai-app.firebasestorage.app",
+  "messagingSenderId": "433611784915",
+  "measurementId": ""
 }

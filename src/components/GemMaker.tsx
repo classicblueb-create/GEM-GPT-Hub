@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import { Sparkles, Download, FileText, Settings, BookOpen, Loader2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Sparkles, Download, FileText, Settings, BookOpen, Loader2, Upload, File as FileIcon, Copy, Check, Info } from 'lucide-react';
 import { GoogleGenAI, Type } from '@google/genai';
-import { useAuth } from '../context/AuthContext';
-import { addBreadcrumb, captureError } from '../lib/sentry';
 
 const LoadingAnimation = () => (
   <div className="flex flex-col items-center justify-center gap-4 py-12">
@@ -16,6 +14,7 @@ const LoadingAnimation = () => (
 );
 
 export const GemMaker = () => {
+  const [inputType, setInputType] = useState<'text' | 'file'>('text');
   const [inputPrompt, setInputPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<{
@@ -23,39 +22,149 @@ export const GemMaker = () => {
     instruction: string;
     howto: string;
   } | null>(null);
+  
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [fileContent, setFileContent] = useState<string>('');
+  const [fileResult, setFileResult] = useState<{
+    gem: { name: string; description: string; instructions: string; };
+    gpt: { name: string; description: string; instructions: string; conversation_starters: string[]; };
+    knowledge_recommendations: string;
+  } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  
   const [error, setError] = useState('');
 
-  const { incrementRequestCount, remainingRequests, isLoggedIn } = useAuth();
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.name.endsWith('.md')) {
+      setError('Please upload a Markdown (.md) file / กรุณาอัปโหลดไฟล์ Markdown (.md)');
+      return;
+    }
+    setUploadedFile(file);
+    setError('');
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setFileContent(event.target?.result as string);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleCopy = (text: string, fieldId: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(fieldId);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
+
+  const handleFileGenerate = async () => {
+    if (!fileContent) return;
+    
+    setIsGenerating(true);
+    setError('');
+    setFileResult(null);
+
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      
+      const prompt = `You are an expert Prompt Engineer. The user has uploaded a skills/persona document (Markdown) to convert into optimized system instructions for Google Gemini GEMs and ChatGPT Custom GPTs.
+
+CRITICAL RULE: You MUST NOT change, distort, or hallucinate the context of the original document. Your job is to format and optimize the existing content into the best possible system prompt structure without losing the original meaning.
+
+When generating the "instructions" for both GEM and GPT, please analyze the original content and structure it using the following framework (use these headings if the original content fits them, to make the prompt highly effective):
+1. Role (บทบาท): กำหนดให้ว่าเป็นใคร
+2. Goal (เป้าหมาย): บอกว่าต้องทำอะไร
+3. Context (บริบท): ขยายความรอบข้าง
+4. Inquiry (การถามกลับ): สั่งให้ถามข้อมูลเพิ่ม (ถ้ามี)
+5. Step (ขั้นตอน): วางลำดับการทำงาน 1-2-3
+6. Tone (น้ำเสียง): ปรับอารมณ์ของภาษา
+7. Rules/Constraints (กฏหลัก/ข้อห้าม)
+
+Note: You don't have to force every single heading if the original text absolutely doesn't support it, but you should use this framework to organize the skills logically.
+
+Here is the original document content:
+---
+${fileContent}
+---
+
+Return the result as a JSON object with the following structure:
+{
+  "gem": {
+    "name": "A professional and catchy name for the Gemini GEM (Bilingual: Thai/English)",
+    "description": "A short description of what this GEM does (Bilingual: Thai/English)",
+    "instructions": "The structured Custom Instruction for Gemini GEM using the 7-part framework above. Keep the original context intact."
+  },
+  "gpt": {
+    "name": "A professional and catchy name for the ChatGPT Custom GPT (Bilingual: Thai/English)",
+    "description": "A short description of what this GPT does (Bilingual: Thai/English)",
+    "instructions": "The structured Custom Instruction for ChatGPT Custom GPT using the 7-part framework above. Keep the original context intact.",
+    "conversation_starters": ["Starter 1", "Starter 2", "Starter 3", "Starter 4"]
+  },
+  "knowledge_recommendations": "Detailed recommendations on what knowledge files (PDFs, CSVs, etc.) to add to make the GEM/GPT more effective. (Bilingual: Thai/English)"
+}
+
+Ensure the output is highly optimized for each specific platform (Gemini vs ChatGPT) while strictly preserving the original skills and context.`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-pro-preview',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              gem: {
+                type: Type.OBJECT,
+                properties: {
+                  name: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  instructions: { type: Type.STRING }
+                },
+                required: ['name', 'description', 'instructions']
+              },
+              gpt: {
+                type: Type.OBJECT,
+                properties: {
+                  name: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  instructions: { type: Type.STRING },
+                  conversation_starters: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING }
+                  }
+                },
+                required: ['name', 'description', 'instructions', 'conversation_starters']
+              },
+              knowledge_recommendations: { type: Type.STRING }
+            },
+            required: ['gem', 'gpt', 'knowledge_recommendations']
+          }
+        }
+      });
+
+      if (response.text) {
+        const parsedResult = JSON.parse(response.text);
+        setFileResult(parsedResult);
+      } else {
+        throw new Error('No response from AI');
+      }
+    } catch (err) {
+      console.error('Generation error:', err);
+      setError('เกิดข้อผิดพลาดในการสร้าง กรุณาลองใหม่อีกครั้ง');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!inputPrompt.trim()) return;
-
-    // Check authentication
-    if (!isLoggedIn) {
-      setError('กรุณาเข้าสู่ระบบก่อนใช้งาน');
-      return;
-    }
-
-    // Check remaining requests
-    if (remainingRequests <= 0) {
-      setError('คุณใช้สิทธิ์การสร้าง GEM ครบแล้ว กรุณาอัปเกรดเป็น Premium หรือ VIP');
-      return;
-    }
-
+    
     setIsGenerating(true);
     setError('');
     setResult(null);
 
     try {
-      // Increment request count before generating
-      const canProceed = await incrementRequestCount();
-      if (!canProceed) {
-        setError('คุณใช้สิทธิ์การสร้าง GEM ครบแล้ว กรุณาอัปเกรดเป็น Premium หรือ VIP');
-        return;
-      }
-
-      addBreadcrumb('Starting GEM generation', 'ai-usage', 'info');
-
       // Initialize Gemini API
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       
@@ -92,18 +201,11 @@ Ensure the output is in Thai language.`;
       if (response.text) {
         const parsedResult = JSON.parse(response.text);
         setResult(parsedResult);
-        addBreadcrumb('GEM generated successfully', 'ai-usage', 'info');
       } else {
         throw new Error('No response from AI');
       }
     } catch (err) {
       console.error('Generation error:', err);
-      captureError(err as Error, {
-        component: 'GemMaker',
-        action: 'generate',
-        inputLength: inputPrompt.length,
-      });
-      addBreadcrumb('GEM generation failed', 'error', 'error');
       setError('เกิดข้อผิดพลาดในการสร้าง GEM กรุณาลองใหม่อีกครั้ง');
     } finally {
       setIsGenerating(false);
@@ -199,44 +301,92 @@ Ensure the output is in Thai language.`;
 
       {/* Input Section */}
       <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 shadow-xl shadow-gray-200/50 dark:shadow-black/20 border border-gray-200 dark:border-gray-800 mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <label className="block text-lg font-medium text-gray-900 dark:text-white">
-            คุณอยากให้ AI ช่วยงานเรื่องอะไร?
-          </label>
-          {isLoggedIn && (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              คงเหลือ: {remainingRequests} ครั้ง
-              {remainingRequests === 0 && (
-                <span className="text-red-500 ml-2">ใช้ครบแล้ว</span>
-              )}
-            </div>
-          )}
+        
+        {/* Tabs */}
+        <div className="flex gap-4 mb-6 border-b border-gray-200 dark:border-gray-800 pb-4">
+          <button
+            onClick={() => setInputType('text')}
+            className={`px-4 py-2 rounded-xl font-medium transition-colors ${inputType === 'text' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+          >
+            Quick GEM (Text)
+          </button>
+          <button
+            onClick={() => setInputType('file')}
+            className={`px-4 py-2 rounded-xl font-medium transition-colors ${inputType === 'file' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+          >
+            Upload Skills File (.md)
+          </button>
         </div>
-        <textarea
-          value={inputPrompt}
-          onChange={(e) => setInputPrompt(e.target.value)}
-          placeholder="เช่น อยากได้ GPTs ช่วยร่างสคริปต์ปิดการขายทางโทรศัพท์..."
-          className="w-full h-32 px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all resize-none mb-4"
-        />
-        {isGenerating ? (
-          <LoadingAnimation />
-        ) : (
-          <div className="flex gap-3">
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating || !inputPrompt.trim() || !isLoggedIn || remainingRequests === 0}
-              className="flex-1 px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-            >
-              <Sparkles size={20} />
-              {!isLoggedIn ? 'เข้าสู่ระบบก่อนใช้งาน' : remainingRequests === 0 ? 'ใช้สิทธิ์ครบแล้ว' : 'สร้าง GEM ของฉันเลย!'}
-            </button>
 
-            {remainingRequests === 0 && (
-              <button className="px-6 py-3.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-medium shadow-lg transition-all hover:-translate-y-0.5">
-                อัปเกรดเลย
+        {inputType === 'text' ? (
+          <>
+            <label className="block text-lg font-medium text-gray-900 dark:text-white mb-4">
+              คุณอยากให้ AI ช่วยงานเรื่องอะไร? / What do you want AI to help with?
+            </label>
+            <textarea
+              value={inputPrompt}
+              onChange={(e) => setInputPrompt(e.target.value)}
+              placeholder="เช่น อยากได้ GPTs ช่วยร่างสคริปต์ปิดการขายทางโทรศัพท์... / e.g., I want a GPT to help draft a telesales script..."
+              className="w-full h-32 px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all resize-none mb-4"
+            />
+            {isGenerating ? (
+              <LoadingAnimation />
+            ) : (
+              <button
+                onClick={handleGenerate}
+                disabled={isGenerating || !inputPrompt.trim()}
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              >
+                <Sparkles size={20} />
+                สร้าง GEM ของฉันเลย! / Create my GEM!
               </button>
             )}
-          </div>
+          </>
+        ) : (
+          <>
+            <label className="block text-lg font-medium text-gray-900 dark:text-white mb-4">
+              อัปโหลดไฟล์ Skills (.md) / Upload Skills File
+            </label>
+            
+            <div 
+              className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-8 text-center hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer mb-4"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileUpload} 
+                accept=".md" 
+                className="hidden" 
+              />
+              {uploadedFile ? (
+                <div className="flex flex-col items-center gap-2">
+                  <FileIcon className="text-purple-500" size={48} />
+                  <p className="text-gray-900 dark:text-white font-medium">{uploadedFile.name}</p>
+                  <p className="text-sm text-gray-500">คลิกเพื่อเปลี่ยนไฟล์ / Click to change file</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2">
+                  <Upload className="text-gray-400" size={48} />
+                  <p className="text-gray-900 dark:text-white font-medium">ลากไฟล์มาวาง หรือคลิกเพื่อเลือกไฟล์ / Drag and drop or click to select file</p>
+                  <p className="text-sm text-gray-500">รองรับเฉพาะไฟล์ Markdown (.md) / Supports Markdown (.md) only</p>
+                </div>
+              )}
+            </div>
+
+            {isGenerating ? (
+              <LoadingAnimation />
+            ) : (
+              <button
+                onClick={handleFileGenerate}
+                disabled={isGenerating || !fileContent}
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/25 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              >
+                <Sparkles size={20} />
+                แปลงเป็น GEM & GPTs / Convert to GEM & GPTs
+              </button>
+            )}
+          </>
         )}
         {error && <p className="text-red-500 mt-4 text-sm">{error}</p>}
       </div>
@@ -276,6 +426,147 @@ Ensure the output is in Thai language.`;
               <pre className="whitespace-pre-wrap font-sans text-sm text-gray-800 dark:text-gray-200 leading-relaxed bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-800">
                 {result.howto}
               </pre>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Output Section for File Upload */}
+      {fileResult && inputType === 'file' && (
+        <div className="space-y-6 animate-[animationIn_0.5s_ease-out_both]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* GEM Panel */}
+            <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-xl shadow-gray-200/50 dark:shadow-black/20 border border-blue-200 dark:border-blue-900/50 flex flex-col h-full">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <Sparkles size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Google Gemini GEM</h3>
+                  <p className="text-sm text-gray-500">Optimized for Gemini / ปรับแต่งสำหรับ Gemini</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 flex-grow">
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Name / ชื่อ</label>
+                    <button onClick={() => handleCopy(fileResult.gem.name, 'gem-name')} className="text-gray-400 hover:text-blue-500 transition-colors">
+                      {copiedField === 'gem-name' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white font-medium">
+                    {fileResult.gem.name}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Description / คำอธิบาย</label>
+                    <button onClick={() => handleCopy(fileResult.gem.description, 'gem-desc')} className="text-gray-400 hover:text-blue-500 transition-colors">
+                      {copiedField === 'gem-desc' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm">
+                    {fileResult.gem.description}
+                  </div>
+                </div>
+
+                <div className="flex-grow flex flex-col">
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Instructions / คำสั่ง</label>
+                    <button onClick={() => handleCopy(fileResult.gem.instructions, 'gem-inst')} className="text-gray-400 hover:text-blue-500 transition-colors">
+                      {copiedField === 'gem-inst' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <pre className="flex-grow p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-sm font-mono whitespace-pre-wrap overflow-y-auto max-h-96 custom-scrollbar">
+                    {fileResult.gem.instructions}
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* GPT Panel */}
+            <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-xl shadow-gray-200/50 dark:shadow-black/20 border border-green-200 dark:border-green-900/50 flex flex-col h-full">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+                <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+                  <Sparkles size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">ChatGPT Custom GPT</h3>
+                  <p className="text-sm text-gray-500">Optimized for ChatGPT / ปรับแต่งสำหรับ ChatGPT</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 flex-grow">
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Name / ชื่อ</label>
+                    <button onClick={() => handleCopy(fileResult.gpt.name, 'gpt-name')} className="text-gray-400 hover:text-green-500 transition-colors">
+                      {copiedField === 'gpt-name' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white font-medium">
+                    {fileResult.gpt.name}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Description / คำอธิบาย</label>
+                    <button onClick={() => handleCopy(fileResult.gpt.description, 'gpt-desc')} className="text-gray-400 hover:text-green-500 transition-colors">
+                      {copiedField === 'gpt-desc' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm">
+                    {fileResult.gpt.description}
+                  </div>
+                </div>
+
+                <div className="flex-grow flex flex-col">
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Instructions / คำสั่ง</label>
+                    <button onClick={() => handleCopy(fileResult.gpt.instructions, 'gpt-inst')} className="text-gray-400 hover:text-green-500 transition-colors">
+                      {copiedField === 'gpt-inst' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <pre className="flex-grow p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-sm font-mono whitespace-pre-wrap overflow-y-auto max-h-96 custom-scrollbar">
+                    {fileResult.gpt.instructions}
+                  </pre>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Conversation Starters / ประโยคเริ่มต้น</label>
+                    <button onClick={() => handleCopy(fileResult.gpt.conversation_starters.join('\n'), 'gpt-starters')} className="text-gray-400 hover:text-green-500 transition-colors">
+                      {copiedField === 'gpt-starters' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm">
+                    <ul className="list-disc pl-5 space-y-1">
+                      {fileResult.gpt.conversation_starters.map((starter, i) => (
+                        <li key={i}>{starter}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+          {/* Knowledge Recommendations */}
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 shadow-xl shadow-gray-200/50 dark:shadow-black/20 border border-yellow-200 dark:border-yellow-900/50">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+                <Info size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Knowledge Recommendations / คำแนะนำไฟล์อ้างอิง</h3>
+            </div>
+            <div className="bg-yellow-50 dark:bg-yellow-900/10 p-5 rounded-2xl border border-yellow-100 dark:border-yellow-900/30">
+              <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
+                {fileResult.knowledge_recommendations}
+              </p>
             </div>
           </div>
         </div>
