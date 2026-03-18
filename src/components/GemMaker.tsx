@@ -442,15 +442,19 @@ Ensure the output is in Thai language.`;
                   <Sparkles size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Google Gemini GEM</h3>
-                  <p className="text-sm text-gray-500">Optimized for Gemini / ปรับแต่งสำหรับ Gemini</p>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span>Google Gemini GEM</span>
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded-full border border-blue-100 dark:border-blue-800/50">Optimized for Gemini</span>
+                  </h3>
                 </div>
               </div>
 
               <div className="space-y-4 flex-grow">
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Name / ชื่อ</label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                      Name <span className="text-xs text-gray-400 font-normal">(ชื่อ)</span>
+                    </label>
                     <button onClick={() => handleCopy(fileResult.gem.name, 'gem-name')} className="text-gray-400 hover:text-blue-500 transition-colors">
                       {copiedField === 'gem-name' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                     </button>
@@ -461,8 +465,10 @@ Ensure the output is in Thai language.`;
                 </div>
 
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Description / คำอธิบาย</label>
+                  <div className="flex justify-between items-center mb-2 mt-4">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                      Description <span className="text-xs text-gray-400 font-normal">(คำอธิบาย)</span>
+                    </label>
                     <button onClick={() => handleCopy(fileResult.gem.description, 'gem-desc')} className="text-gray-400 hover:text-blue-500 transition-colors">
                       {copiedField === 'gem-desc' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                     </button>
@@ -473,8 +479,10 @@ Ensure the output is in Thai language.`;
                 </div>
 
                 <div className="flex-grow flex flex-col">
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Instructions / คำสั่ง</label>
+                  <div className="flex justify-between items-center mb-2 mt-4">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                      Instructions <span className="text-xs text-gray-400 font-normal">(คำสั่ง)</span>
+                    </label>
                     <button onClick={() => handleCopy(fileResult.gem.instructions, 'gem-inst')} className="text-gray-400 hover:text-blue-500 transition-colors">
                       {copiedField === 'gem-inst' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                     </button>
@@ -493,15 +501,19 @@ Ensure the output is in Thai language.`;
                   <Sparkles size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">ChatGPT Custom GPT</h3>
-                  <p className="text-sm text-gray-500">Optimized for ChatGPT / ปรับแต่งสำหรับ ChatGPT</p>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span>ChatGPT Custom GPT</span>
+                    <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2.5 py-1 rounded-full border border-green-100 dark:border-green-800/50">Optimized for ChatGPT</span>
+                  </h3>
                 </div>
               </div>
 
               <div className="space-y-4 flex-grow">
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Name / ชื่อ</label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                      Name <span className="text-xs text-gray-400 font-normal">(ชื่อ)</span>
+                    </label>
                     <button onClick={() => handleCopy(fileResult.gpt.name, 'gpt-name')} className="text-gray-400 hover:text-green-500 transition-colors">
                       {copiedField === 'gpt-name' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                     </button>
@@ -512,8 +524,10 @@ Ensure the output is in Thai language.`;
                 </div>
 
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Description / คำอธิบาย</label>
+                  <div className="flex justify-between items-center mb-2 mt-4">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                      Description <span className="text-xs text-gray-400 font-normal">(คำอธิบาย)</span>
+                    </label>
                     <button onClick={() => handleCopy(fileResult.gpt.description, 'gpt-desc')} className="text-gray-400 hover:text-green-500 transition-colors">
                       {copiedField === 'gpt-desc' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                     </button>
@@ -524,8 +538,10 @@ Ensure the output is in Thai language.`;
                 </div>
 
                 <div className="flex-grow flex flex-col">
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Instructions / คำสั่ง</label>
+                  <div className="flex justify-between items-center mb-2 mt-4">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                      Instructions <span className="text-xs text-gray-400 font-normal">(คำสั่ง)</span>
+                    </label>
                     <button onClick={() => handleCopy(fileResult.gpt.instructions, 'gpt-inst')} className="text-gray-400 hover:text-green-500 transition-colors">
                       {copiedField === 'gpt-inst' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                     </button>
@@ -536,8 +552,10 @@ Ensure the output is in Thai language.`;
                 </div>
 
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Conversation Starters / ประโยคเริ่มต้น</label>
+                  <div className="flex justify-between items-center mb-2 mt-4">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                      Conversation Starters <span className="text-xs text-gray-400 font-normal">(ประโยคเริ่มต้น)</span>
+                    </label>
                     <button onClick={() => handleCopy(fileResult.gpt.conversation_starters.join('\n'), 'gpt-starters')} className="text-gray-400 hover:text-green-500 transition-colors">
                       {copiedField === 'gpt-starters' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                     </button>
@@ -561,7 +579,11 @@ Ensure the output is in Thai language.`;
               <div className="w-10 h-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
                 <Info size={24} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Knowledge Recommendations / คำแนะนำไฟล์อ้างอิง</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <span>Knowledge Recommendations</span>
+                <span className="hidden sm:inline text-gray-300 dark:text-gray-600">|</span>
+                <span className="text-lg font-medium text-gray-500 dark:text-gray-400">คำแนะนำไฟล์อ้างอิง</span>
+              </h3>
             </div>
             <div className="bg-yellow-50 dark:bg-yellow-900/10 p-5 rounded-2xl border border-yellow-100 dark:border-yellow-900/30">
               <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">

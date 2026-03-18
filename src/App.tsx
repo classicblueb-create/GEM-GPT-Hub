@@ -6,7 +6,8 @@ import { BlueprintCard } from './components/BlueprintCard';
 import { PromptGenerator } from './components/PromptGenerator';
 import { LandingPage } from './components/LandingPage';
 import { GemMaker } from './components/GemMaker';
-import { LayoutDashboard, Zap, Crown, User, LogOut, Heart, Copy, Check } from 'lucide-react';
+import { PromptDetailView } from './components/PromptDetailView';
+import { LayoutDashboard, Zap, Crown, User, LogOut, Heart, Copy, Check, Search, Filter, TrendingUp, Megaphone, PenTool, Code, ChevronLeft } from 'lucide-react';
 import { Layout } from './components/Layout';
 import { Footer } from './components/Footer';
 import { Resources } from './pages/Resources';
@@ -76,70 +77,6 @@ const LoginModal = ({ onClose, onLoginSuccess }: { onClose: () => void, onLoginS
           </p>
         </form>
         <button onClick={onClose} className="mt-4 w-full py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm">ยกเลิก</button>
-      </div>
-    </div>
-  );
-};
-
-const PromptDetailModal = ({ blueprint, onClose }: { blueprint: Blueprint, onClose: () => void }) => {
-  const { userTier, favorites, toggleFavorite } = useAuth();
-  const [copied, setCopied] = useState(false);
-
-  const canFavorite = userTier === 'premium' || userTier === 'vip';
-  const isFavorite = favorites.includes(blueprint.id);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(blueprint.logic_template);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleFavorite = () => {
-    if (!canFavorite) {
-      alert('ฟีเจอร์นี้สำหรับ Lifetime Member (1,990.-) และ VIP เท่านั้น');
-      return;
-    }
-    toggleFavorite(blueprint.id);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 sm:p-6">
-      <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 sm:p-10 max-w-3xl w-full shadow-2xl border border-gray-100 dark:border-gray-800 relative max-h-[90vh] flex flex-col">
-        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-700 transition-colors">
-          <iconify-icon icon="lucide:x" width="24"></iconify-icon>
-        </button>
-        
-        <div className="flex justify-between items-start mb-6 pr-12">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">ชื่อ: {blueprint.title}</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">รายละเอียด: {blueprint.description}</p>
-          </div>
-          <button 
-            onClick={handleFavorite}
-            className={`p-3 rounded-full transition-colors ${isFavorite ? 'bg-pink-100 text-pink-500 dark:bg-pink-900/30' : 'bg-gray-100 text-gray-400 hover:text-pink-500 dark:bg-gray-800'}`}
-            title={canFavorite ? "Add to Favorites" : "Favorites available for Lifetime/VIP"}
-          >
-            <Heart className={isFavorite ? "fill-current" : ""} size={24} />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-hidden flex flex-col bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
-          <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-2xl">
-            <span className="font-medium text-gray-700 dark:text-gray-300">คำสั่ง (Prompt)</span>
-            <button 
-              onClick={handleCopy}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-colors text-sm shadow-md shadow-purple-500/20"
-            >
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-              {copied ? 'Copied!' : 'Copy Prompt'}
-            </button>
-          </div>
-          <div className="p-6 overflow-y-auto flex-1">
-            <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
-              {blueprint.logic_template}
-            </pre>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -254,17 +191,94 @@ const ProfileModal = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
+import Joyride, { Step, CallBackProps, STATUS } from 'react-joyride';
+
 const Dashboard = ({ onBack }: { onBack: () => void }) => {
   const { userTier, logout, remainingRequests } = useAuth();
   const [selectedBlueprint, setSelectedBlueprint] = useState<Blueprint | null>(null);
-  const [category, setCategory] = useState('All');
+  const [category, setCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTier, setSelectedTier] = useState<'All' | 'free' | 'premium' | 'vip'>('All');
   const [showProfile, setShowProfile] = useState(false);
   const [activeTab, setActiveTab] = useState<'hub' | 'gem-maker'>('hub');
+  const [runTour, setRunTour] = useState(false);
 
-  const filteredBlueprints = category === 'All' ? blueprints : blueprints.filter(b => b.category === category);
+  React.useEffect(() => {
+    const hasSeenTour = localStorage.getItem('hasSeenTour');
+    if (!hasSeenTour) {
+      setRunTour(true);
+    }
+  }, []);
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { status } = data;
+    const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+    if (finishedStatuses.includes(status)) {
+      setRunTour(false);
+      localStorage.setItem('hasSeenTour', 'true');
+    }
+  };
+
+  const tourSteps: Step[] = [
+    {
+      target: '.tour-step-hub',
+      content: 'ยินดีต้อนรับสู่ Blueprint Hub! ที่นี่คุณสามารถค้นหา Prompt สำเร็จรูปที่พร้อมใช้งานได้ทันที',
+      disableBeacon: true,
+    },
+    {
+      target: '.tour-step-gem-maker',
+      content: 'คลิกที่นี่เพื่อสลับไปยัง GEM Maker ซึ่งคุณสามารถสร้าง Prompt ของคุณเอง หรือแปลงทักษะเป็น GEM/GPT ได้',
+    },
+    {
+      target: '.tour-step-search',
+      content: 'ใช้ช่องค้นหาและตัวกรองเพื่อค้นหา Prompt ที่คุณต้องการได้อย่างรวดเร็ว',
+    },
+    {
+      target: '.tour-step-categories',
+      content: 'เลือกดู Prompt ตามหมวดหมู่เพื่อสำรวจการใช้งานในรูปแบบต่างๆ',
+    }
+  ];
+
+  const filteredBlueprints = blueprints.filter(b => {
+    const matchesCategory = category ? b.category === category : true;
+    const matchesSearch = b.title.toLowerCase().includes(searchQuery.toLowerCase()) || b.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTier = selectedTier === 'All' ? true : b.tier === selectedTier;
+    return matchesCategory && matchesSearch && matchesTier;
+  });
+
+  const categories = [
+    { id: 'Sales', name: 'Sales', icon: <TrendingUp size={24} />, description: 'Prompts for sales and outreach', count: blueprints.filter(b => b.category === 'Sales').length, color: 'from-blue-500 to-cyan-400' },
+    { id: 'Marketing', name: 'Marketing', icon: <Megaphone size={24} />, description: 'Marketing and advertising prompts', count: blueprints.filter(b => b.category === 'Marketing').length, color: 'from-pink-500 to-rose-400' },
+    { id: 'Content', name: 'Content', icon: <PenTool size={24} />, description: 'Content creation and writing', count: blueprints.filter(b => b.category === 'Content').length, color: 'from-purple-500 to-indigo-400' },
+    { id: 'Vibe Coding', name: 'Vibe Coding', icon: <Code size={24} />, description: 'Coding and technical prompts', count: blueprints.filter(b => b.category === 'Vibe Coding').length, color: 'from-emerald-500 to-teal-400' },
+  ];
+
+  if (selectedBlueprint) {
+    return (
+      <PromptDetailView 
+        blueprint={selectedBlueprint} 
+        onBack={() => setSelectedBlueprint(null)} 
+        onSelectBlueprint={(b) => setSelectedBlueprint(b)} 
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] dark:bg-gray-950 relative overflow-hidden">
+      <Joyride
+        steps={tourSteps}
+        run={runTour}
+        continuous
+        showProgress
+        showSkipButton
+        callback={handleJoyrideCallback}
+        styles={{
+          options: {
+            primaryColor: '#9333ea',
+            zIndex: 1000,
+          },
+        }}
+      />
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[600px] opacity-40">
@@ -301,7 +315,7 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
           <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 inline-flex">
             <button
               onClick={() => setActiveTab('hub')}
-              className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all ${
+              className={`tour-step-hub px-6 py-2.5 rounded-xl font-medium text-sm transition-all ${
                 activeTab === 'hub' 
                   ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm' 
                   : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
@@ -312,7 +326,7 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
             </button>
             <button
               onClick={() => setActiveTab('gem-maker')}
-              className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all ${
+              className={`tour-step-gem-maker px-6 py-2.5 rounded-xl font-medium text-sm transition-all ${
                 activeTab === 'gem-maker' 
                   ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-sm' 
                   : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
@@ -327,30 +341,96 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
         {/* Content Area */}
         {activeTab === 'hub' ? (
           <>
-            {/* Top Tags */}
-            <div className="mb-10 flex flex-wrap justify-center gap-3">
-              {['All', 'Sales', 'Marketing', 'Content', 'Vibe Coding'].map(cat => (
-                <button 
-                  key={cat} 
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 shadow-sm ${
-                    category === cat 
-                      ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 scale-105' 
-                      : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 hover:scale-105'
-                  }`} 
-                  onClick={() => setCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
+            {/* Search and Filter Bar */}
+            <div className="tour-step-search mb-8 flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <input 
+                  type="text" 
+                  placeholder="Search prompts by keyword..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all shadow-sm"
+                />
+              </div>
+              <div className="flex gap-4">
+                <div className="relative">
+                  <select 
+                    value={selectedTier}
+                    onChange={(e) => setSelectedTier(e.target.value as any)}
+                    className="appearance-none pl-10 pr-10 py-3 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition-all shadow-sm cursor-pointer"
+                  >
+                    <option value="All">All Tiers</option>
+                    <option value="free">Free</option>
+                    <option value="premium">Premium</option>
+                    <option value="vip">VIP</option>
+                  </select>
+                  <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
+                </div>
+              </div>
             </div>
+
+            {/* Category Navigation (if inside a category) */}
+            {category && (
+              <div className="mb-6 flex items-center gap-4">
+                <button 
+                  onClick={() => setCategory(null)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+                >
+                  <ChevronLeft size={18} />
+                  Back to Categories
+                </button>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{category} Prompts</h2>
+              </div>
+            )}
 
             {/* Grid */}
             <main>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                {filteredBlueprints.map(b => (
-                  <BlueprintCard key={b.id} blueprint={b} onBlueprintClick={(b) => setSelectedBlueprint(b)} />
-                ))}
-              </div>
+              {!category && searchQuery === '' && selectedTier === 'All' ? (
+                <div className="tour-step-categories grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {categories.map(cat => (
+                    <button 
+                      key={cat.id}
+                      onClick={() => setCategory(cat.id)}
+                      className="group relative overflow-hidden rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-6 text-left transition-all hover:shadow-xl hover:-translate-y-1"
+                    >
+                      <div className={`inline-flex p-3 rounded-2xl bg-gradient-to-br ${cat.color} text-white mb-4 shadow-lg`}>
+                        {cat.icon}
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{cat.name}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{cat.description}</p>
+                      <div className="flex items-center justify-between text-sm font-medium">
+                        <span className="text-purple-600 dark:text-purple-400">{cat.count} Prompts</span>
+                        <span className="text-gray-400 group-hover:text-purple-500 transition-colors">Explore →</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  {filteredBlueprints.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                      {filteredBlueprints.map(b => (
+                        <BlueprintCard key={b.id} blueprint={b} onBlueprintClick={(b) => setSelectedBlueprint(b)} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-20">
+                      <div className="inline-flex p-4 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+                        <Search size={32} className="text-gray-400" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No prompts found</h3>
+                      <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filters to find what you're looking for.</p>
+                      <button 
+                        onClick={() => { setSearchQuery(''); setSelectedTier('All'); setCategory(null); }}
+                        className="mt-6 px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-colors"
+                      >
+                        Clear Filters
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </main>
           </>
         ) : (
@@ -358,7 +438,6 @@ const Dashboard = ({ onBack }: { onBack: () => void }) => {
         )}
       </div>
 
-      {selectedBlueprint && <PromptDetailModal blueprint={selectedBlueprint} onClose={() => setSelectedBlueprint(null)} />}
       {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
     </div>
   );
